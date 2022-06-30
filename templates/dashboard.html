@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+</head>
+
+<body>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<nav class="navbar navbar-expand-sm   navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#">Admin mobileX Connect</a>
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Contact us</a>
+      </li>
+      <li class="nav-item dropdown dmenu">
+      <a class="nav-link dropdown-toggle" href="#" id="navbardrop1" data-toggle="dropdown">
+        Dropdown link
+      </a>
+      <div class="dropdown-menu sm-menu">
+        <a class="dropdown-item" href="#">Link 1</a>
+        <a class="dropdown-item" href="#">Link 2</a>
+        <a class="dropdown-item" href="#">Link 3</a>
+      </div>
+    </li>
+     <li class="nav-item dropdown dmenu">
+      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+        Dropdown link
+      </a>
+      <div class="dropdown-menu sm-menu">
+        <a class="dropdown-item" href="#">Link 1</a>
+        <a class="dropdown-item" href="#">Link 2</a>
+        <a class="dropdown-item" href="#">Link 3</a>
+        <a class="dropdown-item" href="#">Link 4</a>
+        <a class="dropdown-item" href="#">Link 5</a>
+        <a class="dropdown-item" href="#">Link 6</a>
+      </div>
+    </li>
+    </ul>
+  </div>
+  <div>
+    <a href="{{url_for('logout')}}">
+    <button class="btn btn-outline-default my-2 my-sm-0" >Logout</button>
+    </a>
+  </div>
+</nav>
+    <form action="{{ url_for('dashboard') }}" method="post">
+        <textarea name="text" rows="20" cols="130" maxlength="500"></textarea>
+        <br><input type="submit" value="Save code" /></br>
+</form>
+<script>
+    	$(document).ready(function () {
+$('.navbar-light .dmenu').hover(function () {
+        $(this).find('.sm-menu').first().stop(true, true).slideDown(150);
+    }, function () {
+        $(this).find('.sm-menu').first().stop(true, true).slideUp(105)
+    });
+});
+        const textarea = document.querySelector('textarea');
+textarea.addEventListener('keydown' , function(event){
+    if(event.key === 'Tab'){
+        event.preventDefault();
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + "\t" + textarea.value.substring(end);
+        textarea.selectionStart = start+1;
+        textarea.selectionEnd = start+1;
+    }
+});
+</script>
+<style>
+
+.navbar{
+    background: #0c73cc !important;
+}
+
+.dropdown{
+    border-radius:0;
+    border:0;
+}
+.dropdown-menu{
+    background: #0c73cc;
+    border:0;
+    top:80%;
+    border-radius:0px 0px 5px 5px;
+}
+.dropdown-item:hover{
+    background:#085ca5;
+    color:#fff;
+}
+.dropdown-menu a{
+    color:#fff;
+}
+.navbar .nav-item .nav-link{
+    color:#eee !important;
+
+}
+.navbar .nav-item .nav-link:hover .navbar .nav-item .nav-link{
+    color:red !important;
+}
+</style>
+</body>
+</html>
