@@ -10,10 +10,13 @@
 
 <body>
     <h1>Register Page</h1>
-
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        {{ form.username }}
+        {{ form.nome }}
+        {{ form.sobrenome }}
+        {{ form.idade }}
+        {{ form.cpf }}
+        {{ form.email }}
         {{ form.password }}
         {{ form.submit }}
     </form>

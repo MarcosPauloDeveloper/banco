@@ -12,7 +12,8 @@
     <h1>Login Page</h1>
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        {{ form.username }}
+        {{ form.cpf }}
+        {{ form.email }}
         {{ form.password }}
         {{ form.checkbox() }}<label>Remember Me</label><br>
         {{ form.submit }}
