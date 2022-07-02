@@ -1,7 +1,8 @@
-from Banco.app import db
+from Banco.connect.connect import db
+from flask_login import UserMixin
 
 
-class Person(db.Model):
+class Person(db.Model, UserMixin):
     __tablename__ = 'person'
     person_id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(86), nullable=False)
@@ -9,8 +10,8 @@ class Person(db.Model):
     cpf = db.Column(db.String(11), nullable=False, unique=True)
     idade = db.Column(db.SmallInteger, nullable=False)
     email = db.Column(db.String(64), unique=True, index=True)
-    password = db.Column(db.String(24), nullable=False)
-    saldo = db.Column(db.Float, nullable=False)
+    password = db.Column(db.String(1024), nullable=False)
+    saldo = db.Column(db.Float)
 
     def __int__(self, nome, sobrenome, cpf, idade, email, password, saldo):
         self.nome = nome
@@ -19,15 +20,10 @@ class Person(db.Model):
         self.idade = idade
         self.email = email
         self.password = password
-        self.saldo = saldo
 
     def save_person(self):
         db.session.add(self)
         db.session.commit()
 
-    @classmethod
-    def find_person(cls, nome):
-        person = cls.query.filter_by(nome=nome).first()
-        if person:
-            return person
-        return None
+
+db.create_all()
