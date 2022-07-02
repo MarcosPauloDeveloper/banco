@@ -16,7 +16,7 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="#">{{ oi }}</a>
+  <a class="navbar-brand" href="#">OLá {{ person }}</a>
   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item">
@@ -54,12 +54,12 @@
     </ul>
   </div>
   <div>
-    <a href="{{url_for('logout')}}">
+    <a href="">
     <button class="btn btn-outline-default my-2 my-sm-0" >Logout</button>
     </a>
   </div>
 </nav>
-    <form action="{{ url_for('dashboard') }}" method="post">
+    <form action="" method="post">
         <textarea name="text" rows="20" cols="130" maxlength="500"></textarea>
         <br><input type="submit" value="Save code" /></br>
 </form>
