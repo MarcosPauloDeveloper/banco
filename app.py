@@ -47,9 +47,8 @@ class RegisterForm(FlaskForm):
 
 
 @login_manager.user_loader
-def load_user(person_id):
-    person = Person.query.filter_by(person_id).first()
-    return person
+def get_user(user_id):
+    return Person.query.filter_by(id=user_id)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -87,24 +86,24 @@ def login():
             body_email = request.form["email"]
             remember = form.checkbox.data
             existing_person = Person.query.filter_by(email=body_email, cpf=body_cpf).first()
-
             if not existing_person:
                 return redirect(url_for('login'))
             if not check_password_hash(existing_person.password, body_pwd):
                 return redirect(url_for('login'))
-            verify_person = Person.query.get(body_email)
+            verify_person = Person.query.filter_by(email=body_email).first()
             if not remember:
                 login_user(verify_person, remember=False)
             else:
                 login_user(verify_person, remember=True)
+                print(login_user(verify_person, remember=True))
             return redirect(url_for('dashboard'))
     return render_template('login.html', form=form)
 
 
-@app.route('/dashboard')
-def index():
-    person = Person.query.all()
-    return render_template('dashboard.html', person=person)
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
 
 
 db.create_all()
