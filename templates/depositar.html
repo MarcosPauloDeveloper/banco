@@ -16,7 +16,7 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="#">OLá, {{person}}</a>
+  <a class="navbar-brand" href="#"></a>
   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item">
@@ -27,7 +27,7 @@
         Ações
       </a>
       <div class="dropdown-menu sm-menu">
-        <a class="dropdown-item" href="{{ url_for('depositar') }}">Depositar</a>
+        <a class="dropdown-item" href="">Depositar</a>
         <a class="dropdown-item" href="#">Sacar</a>
         <a class="dropdown-item" href="#">PIX</a>
       </div>
@@ -41,7 +41,8 @@
   </div>
 </nav>
     <form action="" method="post">
-
+        {{ form.valor_deposito }}
+        {{ form.depositar }}
     </form>
 <script>
     	$(document).ready(function () {

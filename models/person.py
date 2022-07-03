@@ -1,5 +1,6 @@
 from Banco.connect.connect import db
 from flask_login import UserMixin
+from sqlalchemy.sql import table, column, select, update, insert
 
 
 class Person(db.Model, UserMixin):
@@ -24,6 +25,13 @@ class Person(db.Model, UserMixin):
     def save_person(self):
         db.session.add(self)
         db.session.commit()
+
+    def update_saldo_person(self, saldo, email):
+        person = 'person'
+        u = update(person)
+        u = u.values({"saldo": f"{saldo}"})
+        u = u.where('person'.email == f"{email}")
+        db.session.execute(u)
 
     def is_active(self):
         return True
