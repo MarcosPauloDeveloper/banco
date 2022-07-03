@@ -28,8 +28,9 @@
       </a>
       <div class="dropdown-menu sm-menu">
         <a class="dropdown-item" href="{{ url_for('depositar') }}">Depositar</a>
-        <a class="dropdown-item" href="#">Sacar</a>
-        <a class="dropdown-item" href="#">PIX</a>
+        <a class="dropdown-item" href="{{ url_for('sacar') }}">Sacar</a>
+        <a class="dropdown-item" href="{{ url_for('cria_pix') }}">Criar Chave PIX</a>
+        <a class="dropdown-item" href="{{ url_for('pix') }}">Fazer PIX</a>
       </div>
     </li>
     </ul>

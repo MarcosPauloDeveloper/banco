@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
-           <style>
+        <style>
     </style>
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
@@ -53,8 +53,10 @@
   </div>
 </nav>
     <form action="" method="post">
-        {{ form.valor_deposito }}
-        {{ form.depositar }}
+        {{ form.valor_pix }}
+        {{ form.select_chave }}
+        {{ form.chave }}
+        {{ form.transferir }}
     </form>
 <script>
     	$(document).ready(function () {

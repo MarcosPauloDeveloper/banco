@@ -1,6 +1,5 @@
 from Banco.connect.connect import db
 from flask_login import UserMixin
-from sqlalchemy.sql import table, column, select, update, insert
 
 
 class Person(db.Model, UserMixin):
@@ -13,31 +12,26 @@ class Person(db.Model, UserMixin):
     email = db.Column(db.String(64), unique=True, index=True)
     password = db.Column(db.String(1024), nullable=False)
     saldo = db.Column(db.Float)
+    chave_pix_cpf = db.Column(db.Boolean)
+    chave_pix_email = db.Column(db.Boolean)
 
-    def __int__(self, nome, sobrenome, cpf, idade, email, password, saldo):
+    def __int__(self, nome, sobrenome, cpf, idade, email, password, saldo, chave_pix_cpf, chave_pix_email):
         self.nome = nome
         self.sobrenome = sobrenome
         self.cpf = cpf
         self.idade = idade
         self.email = email
         self.password = password
+        self.saldo = saldo
+        self.chave_pix_cpf = chave_pix_cpf
+        self.chave_pix_email = chave_pix_email
 
     def save_person(self):
         db.session.add(self)
         db.session.commit()
 
-    def update_saldo_person(self, saldo, email):
-        person = 'person'
-        u = update(person)
-        u = u.values({"saldo": f"{saldo}"})
-        u = u.where('person'.email == f"{email}")
-        db.session.execute(u)
-
-    def is_active(self):
-        return True
-
-    def __repr__(self):
-        return " "
+    def update(self):
+        db.session.commit()
 
 
 db.create_all()

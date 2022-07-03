@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
-           <style>
+        <style>
     </style>
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
@@ -40,7 +40,7 @@
       <div class="dropdown-menu sm-menu">
         <a class="dropdown-item" href="{{ url_for('depositar') }}">Depositar</a>
         <a class="dropdown-item" href="{{ url_for('sacar') }}">Sacar</a>
-          <a class="dropdown-item" href="{{ url_for('cria_pix') }}">Criar Chave PIX</a>
+        <a class="dropdown-item" href="{{ url_for('cria_pix') }}">Criar Chave PIX</a>
         <a class="dropdown-item" href="{{ url_for('pix') }}">Fazer PIX</a>
       </div>
     </li>
@@ -53,8 +53,9 @@
   </div>
 </nav>
     <form action="" method="post">
-        {{ form.valor_deposito }}
-        {{ form.depositar }}
+        {{ form.select_chave }}
+        {{ form.criar_chave }}
+    <a href="{{ url_for('pix') }}">Já tem uma chave PIX? Fazer PIX</a>
     </form>
 <script>
     	$(document).ready(function () {
