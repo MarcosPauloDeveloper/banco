@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
 from flask_wtf import FlaskForm
 from wtforms.fields import BooleanField, PasswordField, EmailField, SubmitField, StringField, DecimalField, FloatField,\
     SelectField
@@ -8,6 +9,8 @@ from wtforms.validators import InputRequired, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from models.person import Person
+from flask import g
+
 
 login_manager = LoginManager()
 login_manager.login_view = 'login'
@@ -19,6 +22,8 @@ app.secret_key = 'bank'
 login_manager.init_app(app)
 
 db = SQLAlchemy(app)
+engine = create_engine('mysql+pymysql://root:4132@localhost/bank')
+connect = engine.connect()
 
 
 class LoginForm(FlaskForm):
@@ -79,10 +84,12 @@ def register():
             body_pwd = form.password.data
             body_cpf = form.cpf.data
             body_email = form.email.data
+            conn = engine.connect()
             existing_cpf = Person.query.filter_by(cpf=body_cpf).first()
             existing_email = Person.query.filter_by(email=body_email).first()
             if existing_cpf or existing_email:
                 flash("Usuário já existente")
+                conn.close()
                 return redirect(url_for('register'))
             body_pwd_hashed = generate_password_hash(body_pwd, method='pbkdf2:sha256', salt_length=16)
             person.nome = form.nome.data
@@ -95,6 +102,7 @@ def register():
             person.chave_pix_cpf = 0
             person.saldo = 0
             person.save_person()
+            conn.close()
             return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
@@ -108,10 +116,13 @@ def login():
             body_cpf = form.cpf.data
             body_email = form.email.data
             remember = form.checkbox.data
+            conn = engine.connect()
             existing_person = Person.query.filter_by(email=body_email, cpf=body_cpf).first()
             if not existing_person:
+                conn.close()
                 return redirect(url_for('login'))
             if not check_password_hash(existing_person.password, body_pwd):
+                conn.close()
                 return redirect(url_for('login'))
             verify_person = Person.query.filter_by(email=body_email).first()
             if not remember:
@@ -122,6 +133,7 @@ def login():
             session['nome'] = ola
             email_session = verify_person.email
             session['email'] = email_session
+            conn.close()
             return redirect(url_for('dashboard'))
     return render_template('login.html', form=form)
 
@@ -140,6 +152,7 @@ def depositar():
     person = Person()
     if request.method == 'POST':
         email_id = session["email"]
+        conn = engine.connect()
         person_id = Person.query.filter_by(email=email_id).first()
         value_add = form.valor_deposito.data
         current_value = person_id.saldo
@@ -147,9 +160,11 @@ def depositar():
             value_updated = value_add + current_value
             person_id.saldo = value_updated
             person.update()
+            conn.close()
             flash(message=f"Valor de {value_add}R$ foi depositado com sucesso!", category='success')
         else:
             flash(message="Insira um número válido", category='warning')
+            conn = engine.connect()
             return redirect(url_for('depositar'))
     return render_template('depositar.html', form=form)
 
@@ -161,6 +176,7 @@ def sacar():
     person = Person()
     if request.method == 'POST':
         email_id = session["email"]
+        conn = engine.connect()
         person_id = Person.query.filter_by(email=email_id).first()
         valor_saque = form.valor_saque.data
         current_value = person_id.saldo
@@ -168,12 +184,15 @@ def sacar():
             value_updated = current_value - valor_saque
             if value_updated < 0:
                 flash(message="Não foi possível realizar o saque, seu saldo é insuficiente.", category='danger')
+                conn.close()
                 return redirect(url_for('sacar'))
             person_id.saldo = value_updated
             person.update()
+            conn.close()
             flash(message=f"Saque de {valor_saque}R$ realizado com sucesso!", category='success')
         else:
             flash(message="Insira um número válido", category='warning')
+            conn.close()
             return redirect(url_for('sacar'))
     return render_template('sacar.html', form=form)
 
@@ -185,12 +204,14 @@ def cria_pix():
     person = Person()
     if request.method == 'POST':
         email_id = session["email"]
+        conn = engine.connect()
         person_id = Person.query.filter_by(email=email_id).first()
         chave_pix = form.select_chave.data
         if chave_pix == 'CPF':
             if person_id.chave_pix_cpf != 1:
                 person_id.chave_pix_cpf = 1
                 person.update()
+                conn.close()
                 flash(message="Chave PIX criada com sucesso!", category='success')
             else:
                 flash(message="Sua chave PIX para seu CPF já foi criada anteriormente", category='info')
@@ -199,6 +220,7 @@ def cria_pix():
             if person_id.chave_pix_email != 1:
                 person_id.chave_pix_email = 1
                 person.update()
+                conn.close()
                 flash(message="Chave PIX criada com sucesso!", category='success')
             else:
                 flash(message="Sua chave PIX para seu Email já foi criada anteriormente", category='info')
@@ -213,6 +235,7 @@ def pix():
     person = Person()
     if request.method == 'POST':
         email_id = session["email"]
+        conn = engine.connect()
         person_remetente = Person.query.filter_by(email=email_id).first()
         person_remetente_cpf = person_remetente.cpf
         saldo_remetente = person_remetente.saldo
@@ -221,17 +244,20 @@ def pix():
         chave_pix = form.chave.data
         if saldo_remetente - valor_pix < 0:
             flash(message="Saldo insuficiente", category='warning')
+            conn.close()
             return redirect(url_for('pix'))
         if valor_pix and valor_pix > 0:
             if tipo_chave == 'CPF':
                 destinatario = Person.query.filter_by(cpf=chave_pix).first()
                 if destinatario is None:
                     flash(message="Chave Inválida", category='danger')
+                    conn.close()
                     return redirect(url_for('pix'))
                 try:
                     if destinatario.cpf and person_remetente.cpf:
                         if destinatario.cpf == person_remetente.cpf:
                             flash(message="Operação Inválida", category='danger')
+                            conn.close()
                             return redirect(url_for('pix'))
                 except ValueError:
                     ValueError
@@ -242,6 +268,7 @@ def pix():
                     novo_saldo_remetente = saldo_remetente - valor_pix
                     person_remetente.saldo = novo_saldo_remetente
                     person.update()
+                    conn.close()
                     flash(message=f"PIX no valor de {valor_pix}R$ foi realizado com sucesso!", category='success')
                     return redirect(url_for('pix'))
                 flash(message=f"Chave PIX inválida", category='danger')
@@ -250,11 +277,13 @@ def pix():
                 destinatario = Person.query.filter_by(email=chave_pix).first()
                 if destinatario is None:
                     flash(message="Chave inválida", category='danger')
+                    conn.close()
                     return redirect(url_for('pix'))
                 try:
                     if destinatario.email and person_remetente.email:
                         if destinatario.email == person_remetente.email:
                             flash(message="Operação Inválida", category='danger')
+                            conn.close()
                             return redirect(url_for('pix'))
                 except ValueError:
                     ValueError
@@ -265,9 +294,11 @@ def pix():
                     novo_saldo_remetente = saldo_remetente - valor_pix
                     person_remetente.saldo = novo_saldo_remetente
                     person.update()
+                    conn.close()
                     flash(message=f"PIX no valor de {valor_pix}R$ foi realizado com sucesso!", category='success')
                     return redirect(url_for('pix'))
                 flash(message=f"Chave PIX inválida", category='danger')
+                conn.close()
                 return redirect(url_for('pix'))
         else:
             flash(message="Insira um número válido", category='warning')
